@@ -277,11 +277,7 @@ Os::init(int argc, char **argv)
         lang[2] = '\0';
         LOG_INFO("Got locale: \"%s\", using \"%s\"\n", locale, lang);
         auto fn = thp::format("i18n/%s", lang);
-        if (!Config::readFile(fn).empty()) {
-            Tr::load(fn);
-        } else {
-            LOG_INFO("No translation file for %s, send a pull request", lang);
-        }
+        Tr::load(fn);
     }
 }
 

@@ -63,11 +63,16 @@ Tr::defer(std::function<std::string()> fmt)
 void
 Tr::load(const std::string &filename)
 {
-    std::string data = Config::readFile(filename);
+    auto data = Config::readFile(filename);
+
+    if (!data.first) {
+        LOG_INFO("No translation file found (%s), send a pull request", filename.c_str());
+        return;
+    }
 
     g_map.clear();
     int lineno = 1, loaded = 0;
-    for (auto &line: thp::split(thp::trim(data), "\n")) {
+    for (auto &line: thp::split(thp::trim(data.second), "\n")) {
         std::string k, v;
         try {
             thp::unpack({&k, &v}) = thp::split(line, "=");

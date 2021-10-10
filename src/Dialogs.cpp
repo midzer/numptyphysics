@@ -219,7 +219,7 @@ public:
     ScrollArea* scroll = new ScrollArea();
     scroll->fitToParent(true);
     // TODO: Make help_text.html translatable
-    RichText *text = new RichText(Tr::copy(Config::readFile("help_text.html")));
+    RichText *text = new RichText(Tr::copy(Config::readFile("help_text.html").second));
     scroll->virtualSize(Vec2(WORLD_WIDTH,text->layout(WORLD_WIDTH)));
     text->fitToParent(true);
     text->alpha(100);

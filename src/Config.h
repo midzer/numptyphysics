@@ -87,7 +87,7 @@ public:
     static std::string baseName(const std::string &name);
 
     static std::string findFile(const std::string &name);
-    static std::string readFile(const std::string &name);
+    static std::pair<bool,std::string> readFile(const std::string &name);
     static Blob *readBlob(const std::string &name);
 };
 

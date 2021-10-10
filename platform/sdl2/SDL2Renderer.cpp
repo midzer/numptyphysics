@@ -18,6 +18,8 @@
 #include "Os.h"
 #include "Config.h"
 
+#include "petals_log.h"
+
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 
@@ -92,6 +94,11 @@ SDL2Renderer::load(const char *filename, bool cache)
     std::string f = Config::findFile(filename);
 
     SDL_Surface *img = IMG_Load(f.c_str());
+
+    if (!img) {
+        LOG_FATAL("Could not load image file '%s'", f.c_str());
+    }
+
     SDL_Surface *tmp = SDL_ConvertSurfaceFormat(img, SDL_PIXELFORMAT_ABGR8888, 0);
     SDL_FreeSurface(img);
 

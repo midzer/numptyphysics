@@ -289,7 +289,7 @@ std::string Levels::load(int i)
   LevelDesc *lev = findLevel(i);
 
   if (lev) {
-      return Config::readFile(lev->file);
+      return Config::readFile(lev->file).second;
   }
 
   return "";

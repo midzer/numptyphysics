@@ -16,6 +16,8 @@
 
 #include "Config.h"
 
+#include "petals_log.h"
+
 #include <sstream>
 #include <fstream>
 
@@ -39,6 +41,11 @@ Config::readBlob(const std::string &name)
     std::string filename = findFile(name);
     std::ifstream is(filename.c_str(), std::ios::in);
 
+    if (!is.is_open()) {
+        LOG_FATAL("Could not open file '%s'", name.c_str());
+        exit(1);
+    }
+
     is.seekg(0, is.end);
     size_t length = is.tellg();
     is.seekg(0, is.beg);
@@ -51,11 +58,15 @@ Config::readBlob(const std::string &name)
     return new Blob(buffer, length);
 }
 
-std::string
+std::pair<bool,std::string>
 Config::readFile(const std::string &name)
 {
     std::string filename = findFile(name);
     std::ifstream is(filename.c_str(), std::ios::in);
+
+    if (!is.is_open()) {
+        return std::make_pair(false, "");
+    }
 
     is.seekg(0, is.end);
     size_t length = is.tellg();
@@ -69,7 +80,7 @@ Config::readFile(const std::string &name)
     std::string result = buffer;
     delete[] buffer;
 
-    return result;
+    return std::make_pair(true, result);
 }
 
 std::string
