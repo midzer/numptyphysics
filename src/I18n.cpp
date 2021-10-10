@@ -31,7 +31,8 @@ Tr::c_str() const
         if (it != g_map.end()) {
             return it->second.c_str();
         } else {
-            LOG_WARNING("Untranslated: '%s'", key);
+            // Uncomment if you're developing translation files
+            //LOG_WARNING("Untranslated: '%s'", key);
         }
     }
 
