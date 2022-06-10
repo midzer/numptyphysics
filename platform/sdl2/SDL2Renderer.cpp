@@ -148,7 +148,14 @@ SDL2Renderer::text(const NP::Font &font, const char *text, int rgb)
     fg.value = SDL_MapRGB(m_pixelformat, r, g, b);
 
     SDL_Surface *surface = TTF_RenderUTF8_Blended(data->m_font, text, fg.color);
-    NP::Texture result = GLRenderer::load((unsigned char *)surface->pixels,
+
+    // Recent versions of SDL2_ttf have no more tightly-packed pixels
+    std::vector<uint32_t> pixels(surface->w * surface->h);
+    for (int y=0; y<surface->h; ++y) {
+        memcpy(pixels.data() + y * surface->w, (const uint8_t *)surface->pixels + y * surface->pitch, sizeof(uint32_t) * surface->w);
+    }
+
+    NP::Texture result = GLRenderer::load((unsigned char *)pixels.data(),
                                           surface->w, surface->h);
     SDL_FreeSurface(surface);
 
