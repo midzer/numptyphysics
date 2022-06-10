@@ -55,7 +55,7 @@ struct FloatArray {
         : data(static_cast<float *>(malloc(other.size)))
         , size(other.size)
     {
-        memcpy(this->data, data, size);
+        memcpy(this->data, other.data, size);
     }
 
     FloatArray &operator=(const FloatArray &other)
