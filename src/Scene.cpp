@@ -544,6 +544,7 @@ void Scene::clear()
   }
 
   clearWithDelete(m_strokes);
+  m_createStroke = NULL;
   clearWithDelete(m_deletedStrokes);
   if ( m_world ) {
     //step is required to actually destroy bodies and joints
