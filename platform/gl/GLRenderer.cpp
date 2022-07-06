@@ -831,7 +831,7 @@ GLRenderer::path(const Path &path, int rgba)
         }
     }
     priv->submitPath(points, points_len * sizeof(float));
-    delete points;
+    delete[] points;
 }
 
 void
