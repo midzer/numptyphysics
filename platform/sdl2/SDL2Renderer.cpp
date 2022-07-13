@@ -100,10 +100,10 @@ SDL2Renderer::load(const char *filename, bool cache)
     }
 
     SDL_Surface *tmp = SDL_ConvertSurfaceFormat(img, SDL_PIXELFORMAT_ABGR8888, 0);
-    SDL_FreeSurface(img);
 
     NP::Texture result = GLRenderer::load((unsigned char *)tmp->pixels, img->w, img->h);
     SDL_FreeSurface(tmp);
+    SDL_FreeSurface(img);
 
     if (cache) {
         // Store loaded image in cache
