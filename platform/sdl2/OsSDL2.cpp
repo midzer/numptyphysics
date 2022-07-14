@@ -56,7 +56,7 @@ static int mapSDLKeyToNumptyKey(int key)
     return NUMPTYKEY_NONE;
 }
 
-static void mapSDLEventToToolkitEvent(SDL_Event &e, ToolkitEvent &ev)
+static void mapSDLEventToToolkitEvent(SDL_Event &e, ToolkitEvent &ev, const Vec2 &fbsize)
 {
     switch (e.type) {
         case SDL_MOUSEBUTTONDOWN:
@@ -82,22 +82,25 @@ static void mapSDLEventToToolkitEvent(SDL_Event &e, ToolkitEvent &ev)
             break;
         case SDL_FINGERDOWN:
             ev.type = ToolkitEvent::PRESS;
-            ev.x = e.tfinger.x;
-            ev.y = e.tfinger.y;
+            ev.x = e.tfinger.x * fbsize.x;
+            ev.y = e.tfinger.y * fbsize.y;
+            // TODO: Proper multi-touch support
             ev.finger = 0;//e.tfinger.fingerId;
             ev.key = 1;
             break;
         case SDL_FINGERUP:
             ev.type = ToolkitEvent::RELEASE;
-            ev.x = e.tfinger.x;
-            ev.y = e.tfinger.y;
+            ev.x = e.tfinger.x * fbsize.x;
+            ev.y = e.tfinger.y * fbsize.y;
+            // TODO: Proper multi-touch support
             ev.finger = 0;//e.tfinger.fingerId;
             ev.key = 1;
             break;
         case SDL_FINGERMOTION:
             ev.type = ToolkitEvent::MOVE;
-            ev.x = e.tfinger.x;
-            ev.y = e.tfinger.y;
+            ev.x = e.tfinger.x * fbsize.x;
+            ev.y = e.tfinger.y * fbsize.y;
+            // TODO: Proper multi-touch support
             ev.finger = 0;//e.tfinger.fingerId;
             ev.key = 1;
             break;
@@ -147,7 +150,7 @@ public:
     {
         SDL_Event e;
         if (SDL_PollEvent(&e)) {
-            mapSDLEventToToolkitEvent(e, ev);
+            mapSDLEventToToolkitEvent(e, ev, m_renderer->framebuffer_size());
             m_renderer->mapXY(ev.x, ev.y);
             return true;
         }
