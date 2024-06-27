@@ -6,7 +6,7 @@ ifdef DEVKITPRO
 TARGETS += Gen/nds-float/lib/libbox2d.a Gen/nds-fixed/lib/libbox2d.a
 endif
 
-CXXFLAGS=	-g -O2
+CXXFLAGS=	-flto -O3
 
 SOURCES = \
 	./Dynamics/b2Body.cpp \
@@ -95,7 +95,7 @@ Gen/fixed/%.d:		%.cpp
 
 
 
-NDS_COMPILE_FLAGS= -g -O2 -fomit-frame-pointer -ffast-math \
+NDS_COMPILE_FLAGS= -flto -O3 -fomit-frame-pointer -ffast-math \
 		-march=armv5te -mtune=arm946e-s -mthumb-interwork \
 		-DARM9 -fno-rtti -fno-exceptions -c \
 		-DTARGET_IS_NDS \

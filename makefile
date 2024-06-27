@@ -19,7 +19,7 @@ endif
 $(info VERSION: $(VERSION))
 
 SOURCES := $(wildcard src/*.cpp)
-CXXFLAGS += -std=c++11 -Isrc -Wall -Wno-sign-compare -DAPP=\"$(APP)\" -DVERSION=\"$(VERSION)\"
+CXXFLAGS += -std=c++11 -Isrc -Wall -Wno-sign-compare -DAPP=\"$(APP)\" -DVERSION=\"$(VERSION)\" -flto -O3 -sUSE_SDL=2 -sUSE_SDL_IMAGE=2 -sUSE_SDL_TTF=2
 
 ifdef DEBUG
 	CXXFLAGS += -g

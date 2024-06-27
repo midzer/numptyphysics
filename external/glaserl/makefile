@@ -1,6 +1,6 @@
 TARGET := libglaserl.a
 
-CFLAGS += -g -O2
+CFLAGS += -flto -O3
 
 SOURCES := $(wildcard *.c)
 OBJECTS := $(SOURCES:.c=.o)

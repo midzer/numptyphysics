@@ -17,7 +17,7 @@
 
 #include "Os.h"
 
-#ifndef _WIN32
+#ifdef _WIN32
 #include <gio/gio.h>
 
 
@@ -42,7 +42,7 @@ public:
     {
     }
 
-#ifndef _WIN32
+#ifdef _WIN32
     virtual bool openBrowser(const char *url)
     {
         return g_app_info_launch_default_for_uri (url, NULL, NULL) == TRUE;
