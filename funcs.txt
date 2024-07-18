@@ -1,0 +1,7 @@
+[
+    "main",
+    "SDL2Renderer::swap()",
+    "SDL_Delay",
+    "Emscripten_GLES_SwapWindow",
+    "dynCall_v"
+]
