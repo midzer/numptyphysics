@@ -16,8 +16,39 @@
 #ifndef NUMPTYPHYSICS_APP_H
 #define NUMPTYPHYSICS_APP_H
 
-class MainLoop;
+#include "Common.h"
+#include "Config.h"
+#include "Game.h"
+#include "Scene.h"
+#include "Levels.h"
+#include "Canvas.h"
+#include "Ui.h"
+#include "Font.h"
+#include "Dialogs.h"
+#include "Event.h"
 
-extern MainLoop *npmain(int argc, char** argv);
+#include "thp_timestep.h"
+#include "thp_format.h"
+#include "petals_log.h"
+
+class App : private Container
+{
+public:
+  App(int argc, char** argv);
+  ~App();
+  const char* name();
+  bool step();
+
+private:
+  void render();
+  bool processEvent(ToolkitEvent &ev);
+  virtual bool onEvent( Event& ev );
+
+  int m_width;
+  int m_height;
+  bool m_quit;
+  Window *m_window;
+  thp::Timestep m_timestep;
+};
 
 #endif /* NUMPTYPHYSICS_APP_H */

@@ -14,20 +14,7 @@
  * General Public License for more details.
  */
 
-#include "Common.h"
-#include "Config.h"
-#include "Game.h"
-#include "Scene.h"
-#include "Levels.h"
-#include "Canvas.h"
-#include "Ui.h"
-#include "Font.h"
-#include "Dialogs.h"
-#include "Event.h"
-
-#include "thp_timestep.h"
-#include "thp_format.h"
-#include "petals_log.h"
+#include "App.h"
 
 #include <cstdio>
 #include <cstring>
@@ -35,92 +22,81 @@
 #include <unistd.h>
 
 
-class App : private Container, public MainLoop
-{
-  int m_width;
-  int m_height;
-  bool m_quit;
-  Window *m_window;
-  thp::Timestep m_timestep;
-public:
-  App(int argc, char** argv)
+App::App(int argc, char** argv)
     : m_width(WORLD_WIDTH)
     , m_height(WORLD_HEIGHT)
     , m_quit(false)
     , m_window(NULL)
     , m_timestep(ITERATION_RATE)
-  {
-      OS->ensurePath(OS->userDataDir());
-      OS->init();
-      setEventMap(APP_MAP);
+{
+    OS->ensurePath(OS->userDataDir());
+    OS->init();
+    setEventMap(APP_MAP);
 
-      for (int i=0; i<argc; i++) {
-          if (i < argc-1 && strcmp(argv[i], "--lang") == 0) {
-              LOG_DEBUG("Trying to load translation for '%s'", argv[i+1]);
-              Tr::load(thp::format("i18n/%s", argv[i+1]));
-          }
-      }
+    for (int i=0; i<argc; i++) {
+        if (i < argc-1 && strcmp(argv[i], "--lang") == 0) {
+            LOG_DEBUG("Trying to load translation for '%s'", argv[i+1]);
+            Tr::load(thp::format("i18n/%s", argv[i+1]));
+        }
+    }
 
-      m_window = new Window(m_width,m_height,"Numpty Physics");
-      sizeTo(Vec2(m_width,m_height));
+    m_window = new Window(m_width,m_height,"Numpty Physics");
+    sizeTo(Vec2(m_width,m_height));
 
-      Levels *levels = new Levels({Config::defaultLevelPath(), OS->userDataDir()});
-      levels->dump();
+    Levels *levels = new Levels({Config::defaultLevelPath(), OS->userDataDir()});
+    levels->dump();
 
-      add( createGameLayer( levels, m_width, m_height ), 0, 0 );
-  }
+    add( createGameLayer( levels, m_width, m_height ), 0, 0 );
+}
 
-  ~App()
-  {
+App::~App()
+{
     delete m_window;
-  }
+}
 
-  const char* name() {return "App";}
+const char* App::name() {return "App";}
 
-private:
+void App::render()
+{
+    auto world = OS->renderer()->world_rect();
+    m_window->clip(world);
+    m_window->clear();
+    draw(*m_window, world);
+    m_window->update();
+}
 
-  void render()
-  {
-      auto world = OS->renderer()->world_rect();
-      m_window->clip(world);
-      m_window->clear();
-      draw(*m_window, world);
-      m_window->update();
-  }
+bool App::processEvent(ToolkitEvent &ev)
+{
+    switch (ev.type) {
+        case ToolkitEvent::QUIT:
+            m_quit = true;
+            return true;
+        case ToolkitEvent::KEYDOWN:
+            switch (ev.key) {
+                case 'q':
+                    m_quit = true;
+                    return true;
+                case '3':
+                    LOG_DEBUG("UI: %s", toString().c_str());
+                    return true;
+                default:
+                    break;
+            }
 
+        case ToolkitEvent::RESIZE:
+            delete m_window;
+            m_window = new Window(m_width, m_height, "Numpty Physics");
+            break;
+        default:
+            /* do nothing */
+            break;
+    }
 
-  bool processEvent(ToolkitEvent &ev)
-  {
-      switch (ev.type) {
-          case ToolkitEvent::QUIT:
-              m_quit = true;
-              return true;
-          case ToolkitEvent::KEYDOWN:
-              switch (ev.key) {
-                  case 'q':
-                      m_quit = true;
-                      return true;
-                  case '3':
-                      LOG_DEBUG("UI: %s", toString().c_str());
-                      return true;
-                  default:
-                      break;
-              }
+    return Container::processEvent(ev);
+}
 
-          case ToolkitEvent::RESIZE:
-              delete m_window;
-              m_window = new Window(m_width, m_height, "Numpty Physics");
-              break;
-          default:
-              /* do nothing */
-              break;
-      }
-
-      return Container::processEvent(ev);
-  }
-
-  virtual bool onEvent( Event& ev )
-  {
+bool App::onEvent( Event& ev )
+{
     switch (ev.code) {
     case Event::QUIT:
       m_quit = true;
@@ -129,36 +105,21 @@ private:
       break;
     }
     return false;
-  }
+}
 
-  virtual bool step()
-  {
-      m_timestep.update(OS->ticks(), [this] () {
-          onTick(OS->ticks());
-
-          ToolkitEvent ev;
-          while (OS->nextEvent(ev)) {
-          // TODO
-              processEvent(ev);
-          }
-      });
-
-      render();
-
-      return !m_quit;
-  }
-};
-
-MainLoop *
-npmain(int argc, char **argv)
+bool App::step()
 {
-    if (argc == 2) {
-        const std::string arg0 = argv[1];
-        if (arg0 == "-v" || arg0 == "--version") {
-            printf("%s %s\n", APP, VERSION);
-            exit(0);
+    m_timestep.update(OS->ticks(), [this] () {
+        onTick(OS->ticks());
+
+        ToolkitEvent ev;
+        while (OS->nextEvent(ev)) {
+        // TODO
+            processEvent(ev);
         }
-    }
-    OS->init(argc, argv);
-    return new App(argc, argv);
+    });
+
+    render();
+
+    return !m_quit;
 }

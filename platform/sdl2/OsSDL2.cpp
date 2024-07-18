@@ -177,8 +177,16 @@ int main(int argc, char** argv)
 {
     std::shared_ptr<Os> os(new OsSDL2());
 
-    std::shared_ptr<MainLoop> mainloop(npmain(argc, argv));
-    while (mainloop->step());
+    if (argc == 2) {
+        const std::string arg0 = argv[1];
+        if (arg0 == "-v" || arg0 == "--version") {
+            printf("%s %s\n", APP, VERSION);
+            exit(0);
+        }
+    }
+    os->init(argc, argv);
+    App *app =  new App(argc, argv);
+    while (app->step());
 
     return 0;
 }

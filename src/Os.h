@@ -25,14 +25,6 @@
 class Accelerometer;
 class WidgetParent;
 
-class MainLoop {
-public:
-    MainLoop() {}
-    virtual ~MainLoop() {}
-
-    virtual bool step() = 0;
-};
-
 class Os
 {
  public:
